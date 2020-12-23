@@ -1,8 +1,15 @@
 language: java
 jdk:
-  - openjdk8
-install: true
-script: mvn clean install
+  - openjdk11
+
 cache:
   directories:
-  - $HOME/.m2
+    - '$HOME/.m2'
+    - '$HOME/.sonar/cache'
+
+addons:
+  sonarcloud:
+    organization: "spoledge"
+
+install: true
+script: mvn clean verify sonar:sonar -Pcoverage

@@ -11,6 +11,14 @@
     <name>XSet - Complementary sets</name>
 
     <properties>
+        <!-- Project build settings -->
+        <java.version>1.8</java.version>
+        <maven.build.timestamp.format>yyyy/MM/dd hh:mm:ss a,z</maven.build.timestamp.format>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <!-- Versions of libraries -->
         <junit-jupiter.version>5.7.0</junit-jupiter.version>
         <hamcrest.version>2.2</hamcrest.version>
     </properties>

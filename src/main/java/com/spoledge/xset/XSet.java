@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Vaclav Bartacek
+ * Copyright (C) 2020 Vaclav Bartacek
  * MIT License
  */
 
@@ -25,7 +25,7 @@ import java.util.Set;
  * It also means that this class is thread-safe.
  *
  * @author Vaclav Bartacek
- * @param E - the type of elements maintained by this extended set
+ * @param <E> - the type of elements maintained by this extended set
  */
 public final class XSet<E> {
 
@@ -125,7 +125,8 @@ public final class XSet<E> {
     private static <T> XSet<T> toXSet(final Collection<T> collection, final boolean complementary) {
         if (collection.isEmpty()) {
             return complementary ? full() : empty();
-        } else {
+        }
+        else {
             final Set<T> items = nonEmptyCollectionToSet(collection);
             return new XSet<>(items, complementary);
         }
@@ -134,7 +135,8 @@ public final class XSet<E> {
     private static <T> Set<T> nonEmptyCollectionToSet(final Collection<T> collection) {
         if (collection.size() == 1) {
             return singleton(collection);
-        } else {
+        }
+        else {
             final Set<T> result = newHashSet(collection);
             // be aware of potential duplicity items that are being collapsed to singleton:
             return result.size() == 1 ? singleton(collection) : Collections.unmodifiableSet(result);

@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2020 Vaclav Bartacek
+ * Copyright (C) 2020 Vaclav Bartacek
  * MIT License
  */
 

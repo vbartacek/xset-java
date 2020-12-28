@@ -51,6 +51,11 @@
         <spotbugs.threshold>Low</spotbugs.threshold>
         <spotbugs.xmlOutput>true</spotbugs.xmlOutput>
 
+        <checkstyle.version>8.38</checkstyle.version>
+        <checkstyle-maven-plugin.version>3.1.1</checkstyle-maven-plugin.version>
+        <checkstyle.config.location>code-style/checkstyle/checkstyle-config.xml</checkstyle.config.location>
+        <checkstyle.header.file>code-style/checkstyle/checkstyle-header</checkstyle.header.file>
+
     </properties>
 
     <dependencies>
@@ -152,6 +157,19 @@
                     <artifactId>spotbugs-maven-plugin</artifactId>
                     <version>${spotbugs-maven-plugin.version}</version>
                     <!-- configured via Maven properties -->
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-checkstyle-plugin</artifactId>
+                    <version>${checkstyle-maven-plugin.version}</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>com.puppycrawl.tools</groupId>
+                            <artifactId>checkstyle</artifactId>
+                            <version>${checkstyle.version}</version>
+                        </dependency>
+                    </dependencies>
                 </plugin>
 
                 <!-- Packaging -->

@@ -56,6 +56,10 @@
         <checkstyle.config.location>code-style/checkstyle/checkstyle-config.xml</checkstyle.config.location>
         <checkstyle.header.file>code-style/checkstyle/checkstyle-header</checkstyle.header.file>
 
+        <sonar.java.pmd.reportPaths>target/pmd.xml</sonar.java.pmd.reportPaths>
+        <sonar.java.spotbugs.reportPaths>target/spotbugs.xml</sonar.java.spotbugs.reportPaths>
+        <sonar.java.checkstyle.reportPaths>target/checkstyle-result.xml</sonar.java.checkstyle.reportPaths>
+
     </properties>
 
     <dependencies>

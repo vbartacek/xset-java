@@ -11,5 +11,8 @@ addons:
   sonarcloud:
     organization: "spoledge"
 
+git:
+  depth: false
+
 install: true
-script: mvn clean verify sonar:sonar -Pcoverage
+script: mvn clean verify pmd:pmd spotbugs:spotbugs checkstyle:checkstyle sonar:sonar -Pcoverage

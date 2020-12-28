@@ -42,7 +42,15 @@
         <hamcrest.version>2.2</hamcrest.version>
 
         <!-- Static analysis -->
+        <pmd-maven-plugin.version>3.14.0</pmd-maven-plugin.version>
         <pmd.version>6.30.0</pmd.version>
+
+        <spotbugs-maven-plugin.version>4.1.4</spotbugs-maven-plugin.version>
+        <spotbugs.version>4.2.0</spotbugs.version>
+        <spotbugs.effort>Max</spotbugs.effort>
+        <spotbugs.threshold>Low</spotbugs.threshold>
+        <spotbugs.xmlOutput>true</spotbugs.xmlOutput>
+
     </properties>
 
     <dependencies>
@@ -107,7 +115,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-pmd-plugin</artifactId>
-                    <version>3.14.0</version>
+                    <version>${pmd-maven-plugin.version}</version>
                     <configuration>
                         <includeTests>true</includeTests>
                     </configuration>
@@ -137,6 +145,13 @@
                             <version>${pmd.version}</version>
                         </dependency>
                     </dependencies>
+                </plugin>
+
+                <plugin>
+                    <groupId>com.github.spotbugs</groupId>
+                    <artifactId>spotbugs-maven-plugin</artifactId>
+                    <version>${spotbugs-maven-plugin.version}</version>
+                    <!-- configured via Maven properties -->
                 </plugin>
 
                 <!-- Packaging -->

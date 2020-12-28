@@ -21,6 +21,9 @@
         <!-- Versions of libraries -->
         <junit-jupiter.version>5.7.0</junit-jupiter.version>
         <hamcrest.version>2.2</hamcrest.version>
+
+        <!-- Static analysis -->
+        <pmd.version>6.30.0</pmd.version>
     </properties>
 
     <dependencies>
@@ -58,18 +61,67 @@
     </dependencies>
 
     <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.22.2</version>
-                <configuration>
-                    <!-- configuration is done via Maven properties (see plugin documentation) -->
-                    <!-- from jococo doc, add jococo java agent -->
-                    <argLine>${argLine}</argLine>
-                </configuration>
-            </plugin>
-        </plugins>
+        <pluginManagement>
+            <plugins>
+
+                <!-- Tests -->
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>2.22.2</version>
+                    <configuration>
+                        <!-- configuration is done via Maven properties (see plugin documentation) -->
+                        <!-- from jococo doc, add jococo java agent -->
+                        <argLine>${argLine}</argLine>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.jacoco</groupId>
+                    <artifactId>jacoco-maven-plugin</artifactId>
+                    <version>0.8.6</version>
+                </plugin>
+
+                <!-- Static analysis  -->
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-pmd-plugin</artifactId>
+                    <version>3.14.0</version>
+                    <configuration>
+                        <includeTests>true</includeTests>
+                    </configuration>
+                    <dependencies>
+                        <dependency>
+                            <groupId>net.sourceforge.pmd</groupId>
+                            <artifactId>pmd-core</artifactId>
+                            <type>jar</type>
+                            <version>${pmd.version}</version>
+                        </dependency>
+                        <dependency>
+                            <groupId>net.sourceforge.pmd</groupId>
+                            <artifactId>pmd-java</artifactId>
+                            <type>jar</type>
+                            <version>${pmd.version}</version>
+                        </dependency>
+                        <dependency>
+                            <groupId>net.sourceforge.pmd</groupId>
+                            <artifactId>pmd-javascript</artifactId>
+                            <type>jar</type>
+                            <version>${pmd.version}</version>
+                        </dependency>
+                        <dependency>
+                            <groupId>net.sourceforge.pmd</groupId>
+                            <artifactId>pmd-jsp</artifactId>
+                            <type>jar</type>
+                            <version>${pmd.version}</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
+
+            </plugins>
+        </pluginManagement>
     </build>
 
     <profiles>
@@ -80,7 +132,6 @@
                     <plugin>
                         <groupId>org.jacoco</groupId>
                         <artifactId>jacoco-maven-plugin</artifactId>
-                        <version>0.8.6</version>
                         <executions>
                             <execution>
                                 <id>prepare-agent</id>

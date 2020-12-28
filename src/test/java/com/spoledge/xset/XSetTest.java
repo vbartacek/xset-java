@@ -66,7 +66,7 @@ class XSetTest {
             final Collection<String> items,
             final boolean complementary) {
 
-        assertAll(
+        assertAll(message,
             () -> assertThat("items", tested.getItems(), is(new HashSet<>(items))),
             () -> assertThat("complementary", tested.isComplementary(), is(complementary)),
             () -> assertThat("finite", tested.isFinite(), is(!complementary)),

@@ -6,6 +6,7 @@
 package com.spoledge.xset;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
@@ -76,4 +77,134 @@ class XSetTest {
         );
     }
 
+    @ParameterizedTest
+    @MethodSource("equalsHashCodeToStringParameters")
+    void testEqualsHashCodeToString(final String message, final XSet<String> set1, final XSet<String> set2) {
+        assertAll(message + ": " + set1 + " " + set2,
+            () -> assertThat("equals ->", set1.equals(set2), is(true)),
+            () -> assertThat("equals <-", set2.equals(set1), is(true)),
+            () -> assertThat("hash", set1.hashCode(), is(set2.hashCode())),
+            () -> assertThat("toString", set1.toString(), is(set2.toString()))
+        );
+    }
+
+    static Stream<Arguments> equalsHashCodeToStringParameters() {
+        return Stream.of(
+            Arguments.of("empty x of[0]", empty(), of()),
+            Arguments.of("of[1]", of("Mon"), of("Mon")),
+            Arguments.of("of[2]", of("Mon", "Tue"), of("Tue", "Mon")),
+            Arguments.of("complementOf[1]", complementOf("Mon"), complementOf("Mon")),
+            Arguments.of("complementOf[2]", complementOf("Mon", "Tue"), complementOf("Tue", "Mon")),
+            Arguments.of("full x complementOf[0]", full(), complementOf())
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("notEqualsParameters")
+    void testNotEquals(final XSet<String> set1, final Object set2) {
+        assertAll("notEquals " + set1 + " " + set2,
+            () -> assertThat("equals ->", set1.equals(set2), is(false)),
+            () -> {
+                if (set2 != null) {
+                    assertThat("equals <-", set2.equals(set1), is(false));
+                }
+            }
+        );
+    }
+
+    static Stream<Arguments> notEqualsParameters() {
+        return Stream.of(
+            Arguments.of(empty(), null),
+            Arguments.of(empty(), new Object()),
+            Arguments.of(empty(), of("Mon")),
+            Arguments.of(empty(), of("Mon", "Tue")),
+            Arguments.of(empty(), complementOf()),
+            Arguments.of(empty(), complementOf("Mon")),
+            Arguments.of(empty(), complementOf("Mon", "Tue")),
+            Arguments.of(empty(), full()),
+
+            Arguments.of(of("Mon"), null),
+            Arguments.of(of("Mon"), new Object()),
+            Arguments.of(of("Mon"), of("Sun")),
+            Arguments.of(of("Mon"), of("Sun", "Sat")),
+            Arguments.of(of("Mon"), complementOf()),
+            Arguments.of(of("Mon"), complementOf("Mon")),
+            Arguments.of(of("Mon"), complementOf("Sun")),
+            Arguments.of(of("Mon"), complementOf("Sun", "Sat")),
+            Arguments.of(of("Mon"), complementOf("Sun", "Mon")),
+            Arguments.of(of("Mon"), full()),
+
+            Arguments.of(of("Mon", "Tue"), null),
+            Arguments.of(of("Mon", "Tue"), new Object()),
+            Arguments.of(of("Mon", "Tue"), of("Sun", "Sat")),
+            Arguments.of(of("Mon", "Tue"), of("Sun", "Mon")),
+            Arguments.of(of("Mon", "Tue"), of("Sun", "Mon", "Tue")),
+            Arguments.of(of("Mon", "Tue"), complementOf()),
+            Arguments.of(of("Mon", "Tue"), complementOf("Sun", "Sat")),
+            Arguments.of(of("Mon", "Tue"), complementOf("Sun", "Mon")),
+            Arguments.of(of("Mon", "Tue"), complementOf("Sun", "Mon", "Tue")),
+            Arguments.of(of("Mon", "Tue"), full()),
+
+            Arguments.of(complementOf("Mon"), null),
+            Arguments.of(complementOf("Mon"), new Object()),
+            Arguments.of(complementOf("Mon"), complementOf()),
+            Arguments.of(complementOf("Mon"), complementOf("Sun")),
+            Arguments.of(complementOf("Mon"), complementOf("Sun", "Sat")),
+            Arguments.of(complementOf("Mon"), complementOf("Sun", "Mon")),
+            Arguments.of(complementOf("Mon"), full()),
+
+            Arguments.of(complementOf("Mon", "Tue"), null),
+            Arguments.of(complementOf("Mon", "Tue"), new Object()),
+            Arguments.of(complementOf("Mon", "Tue"), complementOf()),
+            Arguments.of(complementOf("Mon", "Tue"), complementOf("Sun", "Sat")),
+            Arguments.of(complementOf("Mon", "Tue"), complementOf("Sun", "Mon")),
+            Arguments.of(complementOf("Mon", "Tue"), complementOf("Sun", "Mon", "Tue")),
+            Arguments.of(complementOf("Mon", "Tue"), full()),
+
+            Arguments.of(full(), null),
+            Arguments.of(full(), new Object())
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("emptyIsAlwaysSameInstanceParameters")
+    void testEmptyIsAlwaysSameInstance(final String message, final XSet<String> tested) {
+        assertThat(message, tested, sameInstance(empty()));
+    }
+
+    static Stream<Arguments> emptyIsAlwaysSameInstanceParameters() {
+        return Stream.of(
+            Arguments.of("empty", empty()),
+            Arguments.of("of[0]", of())
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("fullIsAlwaysSameInstanceParameters")
+    void testFullIsAlwaysSameInstance(final String message, final XSet<String> tested) {
+        assertThat(message, tested, sameInstance(full()));
+    }
+
+    static Stream<Arguments> fullIsAlwaysSameInstanceParameters() {
+        return Stream.of(
+            Arguments.of("full", full()),
+            Arguments.of("complementOf[0]", complementOf())
+        );
+    }
+
+    private static XSet<String> of(final String... items) {
+        return XSet.of(items);
+    }
+
+    private static XSet<String> complementOf(final String... items) {
+        return XSet.complementOf(items);
+    }
+
+    private static XSet<String> empty() {
+        return XSet.empty();
+    }
+
+    private static XSet<String> full() {
+        return XSet.full();
+    }
 }

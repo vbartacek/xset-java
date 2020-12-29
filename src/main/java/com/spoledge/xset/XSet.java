@@ -214,4 +214,29 @@ public final class XSet<E> {
         return new HashSet<>(collection);
     }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(items, complementary);
+    }
+
+    @Override
+    public boolean equals(final Object other) {
+        if (this == other) {
+            return true;
+        }
+
+        if (other == null || getClass() != other.getClass()) {
+            return false;
+        }
+
+        final XSet that = (XSet) other;
+
+        return this.complementary == that.complementary && this.items.equals(that.items);
+    }
+
+    @Override
+    public String toString() {
+        return "XSet{" + (complementary ? "~" : "") + items + '}';
+    }
+
 }

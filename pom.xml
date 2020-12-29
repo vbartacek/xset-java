@@ -8,7 +8,26 @@
     <groupId>com.spoledge.xset</groupId>
     <artifactId>xset</artifactId>
     <version>0.1.0-SNAPSHOT</version>
-    <name>XSet - Complementary sets</name>
+    <name>XSet - Complementary Sets</name>
+
+    <inceptionYear>2020</inceptionYear>
+
+    <organization>
+        <name>Spolecne s.r.o.</name>
+        <url>https://www.spoledge.com</url>
+    </organization>
+
+    <scm>
+        <developerConnection>scm:git:https://github.com/vbartacek/xset-java.git</developerConnection>
+        <connection>scm:git:https://github.com/vbartacek/xset-java.git</connection>
+        <tag>HEAD</tag>
+        <url>https://github.com/vbartacek/xset-java</url>
+    </scm>
+
+    <ciManagement>
+        <system>travis-ci</system>
+        <url>https://travis-ci.com/github/vbartacek/xset-java</url>
+    </ciManagement>
 
     <properties>
         <!-- Project build settings -->
@@ -21,6 +40,26 @@
         <!-- Versions of libraries -->
         <junit-jupiter.version>5.7.0</junit-jupiter.version>
         <hamcrest.version>2.2</hamcrest.version>
+
+        <!-- Static analysis -->
+        <pmd-maven-plugin.version>3.14.0</pmd-maven-plugin.version>
+        <pmd.version>6.30.0</pmd.version>
+
+        <spotbugs-maven-plugin.version>4.1.4</spotbugs-maven-plugin.version>
+        <spotbugs.version>4.2.0</spotbugs.version>
+        <spotbugs.effort>Max</spotbugs.effort>
+        <spotbugs.threshold>Low</spotbugs.threshold>
+        <spotbugs.xmlOutput>true</spotbugs.xmlOutput>
+
+        <checkstyle.version>8.38</checkstyle.version>
+        <checkstyle-maven-plugin.version>3.1.1</checkstyle-maven-plugin.version>
+        <checkstyle.config.location>code-style/checkstyle/checkstyle-config.xml</checkstyle.config.location>
+        <checkstyle.header.file>code-style/checkstyle/checkstyle-header</checkstyle.header.file>
+
+        <sonar.java.pmd.reportPaths>target/pmd.xml</sonar.java.pmd.reportPaths>
+        <sonar.java.spotbugs.reportPaths>target/spotbugs.xml</sonar.java.spotbugs.reportPaths>
+        <sonar.java.checkstyle.reportPaths>target/checkstyle-result.xml</sonar.java.checkstyle.reportPaths>
+
     </properties>
 
     <dependencies>
@@ -58,18 +97,95 @@
     </dependencies>
 
     <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.22.2</version>
-                <configuration>
-                    <!-- configuration is done via Maven properties (see plugin documentation) -->
-                    <!-- from jococo doc, add jococo java agent -->
-                    <argLine>${argLine}</argLine>
-                </configuration>
-            </plugin>
-        </plugins>
+        <pluginManagement>
+            <plugins>
+
+                <!-- Tests -->
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>2.22.2</version>
+                    <configuration>
+                        <!-- configuration is done via Maven properties (see plugin documentation) -->
+                        <!-- from jococo doc, add jococo java agent -->
+                        <argLine>${argLine}</argLine>
+                    </configuration>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.jacoco</groupId>
+                    <artifactId>jacoco-maven-plugin</artifactId>
+                    <version>0.8.6</version>
+                </plugin>
+
+                <!-- Static analysis  -->
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-pmd-plugin</artifactId>
+                    <version>${pmd-maven-plugin.version}</version>
+                    <configuration>
+                        <includeTests>true</includeTests>
+                    </configuration>
+                    <dependencies>
+                        <dependency>
+                            <groupId>net.sourceforge.pmd</groupId>
+                            <artifactId>pmd-core</artifactId>
+                            <type>jar</type>
+                            <version>${pmd.version}</version>
+                        </dependency>
+                        <dependency>
+                            <groupId>net.sourceforge.pmd</groupId>
+                            <artifactId>pmd-java</artifactId>
+                            <type>jar</type>
+                            <version>${pmd.version}</version>
+                        </dependency>
+                        <dependency>
+                            <groupId>net.sourceforge.pmd</groupId>
+                            <artifactId>pmd-javascript</artifactId>
+                            <type>jar</type>
+                            <version>${pmd.version}</version>
+                        </dependency>
+                        <dependency>
+                            <groupId>net.sourceforge.pmd</groupId>
+                            <artifactId>pmd-jsp</artifactId>
+                            <type>jar</type>
+                            <version>${pmd.version}</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
+
+                <plugin>
+                    <groupId>com.github.spotbugs</groupId>
+                    <artifactId>spotbugs-maven-plugin</artifactId>
+                    <version>${spotbugs-maven-plugin.version}</version>
+                    <!-- configured via Maven properties -->
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-checkstyle-plugin</artifactId>
+                    <version>${checkstyle-maven-plugin.version}</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>com.puppycrawl.tools</groupId>
+                            <artifactId>checkstyle</artifactId>
+                            <version>${checkstyle.version}</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
+
+                <!-- Packaging -->
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>3.2.0</version>
+                </plugin>
+
+            </plugins>
+        </pluginManagement>
     </build>
 
     <profiles>
@@ -80,7 +196,6 @@
                     <plugin>
                         <groupId>org.jacoco</groupId>
                         <artifactId>jacoco-maven-plugin</artifactId>
-                        <version>0.8.6</version>
                         <executions>
                             <execution>
                                 <id>prepare-agent</id>
@@ -92,6 +207,27 @@
                                 <id>report</id>
                                 <goals>
                                     <goal>report</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>javadoc</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>generate-javadocs</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>javadoc</goal>
                                 </goals>
                             </execution>
                         </executions>

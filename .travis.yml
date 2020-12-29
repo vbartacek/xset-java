@@ -14,5 +14,10 @@ addons:
 git:
   depth: false
 
+branches:
+  only:
+    - develop
+    - /^release\/.*$/
+
 install: true
 script: mvn clean verify pmd:pmd spotbugs:spotbugs checkstyle:checkstyle sonar:sonar -Pcoverage

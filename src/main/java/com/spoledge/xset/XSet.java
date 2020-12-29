@@ -223,6 +223,18 @@ public final class XSet<E> {
     }
 
     /**
+     * Returns the subtraction of the other set from this set.
+     *
+     * @param other the other extended set
+     * @return the subtraction
+     */
+    public XSet<E> subtract(final XSet<E> other) {
+        Objects.requireNonNull(other, "other XSet must not be null");
+
+        return intersect(other.complement());
+    }
+
+    /**
      * Returns the intersection of this and the other extended sets.
      *
      * @param other the other extended set

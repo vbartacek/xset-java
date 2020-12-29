@@ -179,6 +179,77 @@ class XSetTest {
     }
 
     @ParameterizedTest
+    @MethodSource("subtractParameters")
+    void testSubtract(final XSet<String> set1, final XSet<String> set2, final XSet<String> expected) {
+        assertThat("subtract " + set1 + " " + set2, set1.subtract(set2), is(expected));
+    }
+
+    static Stream<Arguments> subtractParameters() {
+        return Stream.of(
+            Arguments.of(empty(), empty(), empty()),
+            Arguments.of(empty(), of("Sun"), empty()),
+            Arguments.of(empty(), of("Sun", "Mon"), empty()),
+            Arguments.of(empty(), complementOf("Sun"), empty()),
+            Arguments.of(empty(), complementOf("Sun", "Mon"), empty()),
+            Arguments.of(empty(), full(), empty()),
+
+            Arguments.of(of("Mon"), empty(), of("Mon")),
+            Arguments.of(of("Mon"), of("Sun"), of("Mon")),
+            Arguments.of(of("Mon"), of("Mon"), empty()),
+            Arguments.of(of("Mon"), of("Sat", "Sun"), of("Mon")),
+            Arguments.of(of("Mon"), of("Sun", "Mon"), empty()),
+            Arguments.of(of("Mon"), complementOf("Sun"), empty()),
+            Arguments.of(of("Mon"), complementOf("Mon"), of("Mon")),
+            Arguments.of(of("Mon"), complementOf("Sat", "Sun"), empty()),
+            Arguments.of(of("Mon"), complementOf("Sun", "Mon"), of("Mon")),
+            Arguments.of(of("Mon"), full(), empty()),
+
+            Arguments.of(of("Mon", "Tue"), empty(), of("Mon", "Tue")),
+            Arguments.of(of("Mon", "Tue"), of("Mon"), of("Tue")),
+            Arguments.of(of("Mon", "Tue"), of("Sun"), of("Mon", "Tue")),
+            Arguments.of(of("Mon", "Tue"), of("Sat", "Sun"), of("Mon", "Tue")),
+            Arguments.of(of("Mon", "Tue"), of("Sun", "Mon"), of("Tue")),
+            Arguments.of(of("Mon", "Tue"), of("Mon", "Tue"), empty()),
+            Arguments.of(of("Mon", "Tue"), of("Mon", "Tue", "Sun"), empty()),
+            Arguments.of(of("Mon", "Tue"), complementOf("Sat", "Sun"), empty()),
+            Arguments.of(of("Mon", "Tue"), complementOf("Sun", "Mon"), of("Mon")),
+            Arguments.of(of("Mon", "Tue"), complementOf("Mon", "Tue"), of("Mon", "Tue")),
+            Arguments.of(of("Mon", "Tue"), complementOf("Mon", "Tue", "Sun"), of("Mon", "Tue")),
+            Arguments.of(of("Mon", "Tue"), full(), empty()),
+
+            Arguments.of(complementOf("Mon"), empty(), complementOf("Mon")),
+            Arguments.of(complementOf("Mon"), of("Mon"), complementOf("Mon")),
+            Arguments.of(complementOf("Mon"), of("Tue"), complementOf("Mon", "Tue")),
+            Arguments.of(complementOf("Mon"), of("Mon", "Tue"), complementOf("Mon", "Tue")),
+            Arguments.of(complementOf("Mon"), of("Sat", "Sun"), complementOf("Mon", "Sat", "Sun")),
+            Arguments.of(complementOf("Mon"), complementOf("Mon"), empty()),
+            Arguments.of(complementOf("Mon"), complementOf("Sun"), of("Sun")),
+            Arguments.of(complementOf("Mon"), complementOf("Sun", "Mon"), of("Sun")),
+            Arguments.of(complementOf("Mon"), full(), empty()),
+
+            Arguments.of(complementOf("Mon", "Tue"), empty(), complementOf("Mon", "Tue")),
+            Arguments.of(complementOf("Mon", "Tue"), of("Mon"), complementOf("Mon", "Tue")),
+            Arguments.of(complementOf("Mon", "Tue"), of("Sun"), complementOf("Sun", "Mon", "Tue")),
+            Arguments.of(complementOf("Mon", "Tue"), of("Mon", "Tue"), complementOf("Mon", "Tue")),
+            Arguments.of(complementOf("Mon", "Tue"), of("Sun", "Mon"), complementOf("Sun", "Mon", "Tue")),
+            Arguments.of(complementOf("Mon", "Tue"), of("Sun", "Mon", "Tue"), complementOf("Sun", "Mon", "Tue")),
+            Arguments.of(complementOf("Mon", "Tue"), complementOf("Mon"), empty()),
+            Arguments.of(complementOf("Mon", "Tue"), complementOf("Sun"), of("Sun")),
+            Arguments.of(complementOf("Mon", "Tue"), complementOf("Mon", "Tue"), empty()),
+            Arguments.of(complementOf("Mon", "Tue"), complementOf("Sun", "Mon"), of("Sun")),
+            Arguments.of(complementOf("Mon", "Tue"), complementOf("Sun", "Mon", "Tue"), of("Sun")),
+            Arguments.of(complementOf("Mon", "Tue"), full(), empty()),
+
+            Arguments.of(full(), empty(), full()),
+            Arguments.of(full(), of("Mon"), complementOf("Mon")),
+            Arguments.of(full(), of("Mon", "Tue"), complementOf("Mon", "Tue")),
+            Arguments.of(full(), complementOf("Sun"), of("Sun")),
+            Arguments.of(full(), complementOf("Sun", "Mon"), of("Sun", "Mon")),
+            Arguments.of(full(), full(), empty())
+        );
+    }
+
+    @ParameterizedTest
     @MethodSource("intersectParameters")
     void testIntersect(final XSet<String> set1, final XSet<String> set2, final XSet<String> expected) {
         assertAll("intersect " + set1 + " " + set2,
@@ -244,6 +315,8 @@ class XSetTest {
             Arguments.of("complementOf[0].complement()", complementOf().complement()),
             Arguments.of("full.complement()", full().complement()),
 
+            Arguments.of("of.minus(complementOf)", of("Mon", "Tue").subtract(complementOf("Sun"))),
+
             Arguments.of("empty.intersect(of)", empty().intersect(of("Mon", "Tue"))),
             Arguments.of("of.intersect(empty)", of("Mon", "Tue").intersect(empty())),
             Arguments.of("of.intersect(of)", of("Mon", "Tue").intersect(of("Sat", "Sun")))
@@ -260,8 +333,13 @@ class XSetTest {
         return Stream.of(
             Arguments.of("full", full()),
             Arguments.of("complementOf[0]", complementOf()),
+
             Arguments.of("of[0].complement()", of().complement()),
-            Arguments.of("empty.complement()", empty().complement())
+            Arguments.of("empty.complement()", empty().complement()),
+
+            Arguments.of("full.minus(empty)", full().subtract(empty())),
+
+            Arguments.of("full.intersect(full)", full().intersect(full()))
         );
     }
 

@@ -302,6 +302,58 @@ class XSetTest {
     }
 
     @ParameterizedTest
+    @MethodSource("unionParameters")
+    void testUnion(final XSet<String> set1, final XSet<String> set2, final XSet<String> expected) {
+        assertAll("union " + set1 + " " + set2,
+            () -> assertThat(" -> ", set1.union(set2), is(expected)),
+            () -> assertThat(" <- ", set2.union(set1), is(expected))
+        );
+    }
+
+    static Stream<Arguments> unionParameters() {
+        return Stream.of(
+            Arguments.of(empty(), empty(), empty()),
+            Arguments.of(empty(), of("Sun"), of("Sun")),
+            Arguments.of(empty(), of("Sun", "Mon"), of("Sun", "Mon")),
+            Arguments.of(empty(), complementOf("Sun"), complementOf("Sun")),
+            Arguments.of(empty(), complementOf("Sun", "Mon"), complementOf("Sun", "Mon")),
+            Arguments.of(empty(), full(), full()),
+
+            Arguments.of(of("Mon"), of("Sun"), of("Sun", "Mon")),
+            Arguments.of(of("Mon"), of("Mon"), of("Mon")),
+            Arguments.of(of("Mon"), of("Sat", "Sun"), of("Sun", "Mon", "Sat")),
+            Arguments.of(of("Mon"), of("Sun", "Mon"), of("Sun", "Mon")),
+            Arguments.of(of("Mon"), complementOf("Sun"), complementOf("Sun")),
+            Arguments.of(of("Mon"), complementOf("Mon"), full()),
+            Arguments.of(of("Mon"), complementOf("Sat", "Sun"), complementOf("Sat", "Sun")),
+            Arguments.of(of("Mon"), complementOf("Sun", "Mon"), complementOf("Sun")),
+            Arguments.of(of("Mon"), full(), full()),
+
+            Arguments.of(of("Mon", "Tue"), of("Sat", "Sun"), of("Sun", "Mon", "Tue", "Sat")),
+            Arguments.of(of("Mon", "Tue"), of("Sun", "Mon"), of("Sun", "Mon", "Tue")),
+            Arguments.of(of("Mon", "Tue"), of("Mon", "Tue"), of("Mon", "Tue")),
+            Arguments.of(of("Mon", "Tue"), of("Mon", "Tue", "Sun"), of("Sun", "Mon", "Tue")),
+            Arguments.of(of("Mon", "Tue"), complementOf("Sat", "Sun"), complementOf("Sat", "Sun")),
+            Arguments.of(of("Mon", "Tue"), complementOf("Sun", "Mon"), complementOf("Sun")),
+            Arguments.of(of("Mon", "Tue"), complementOf("Mon", "Tue"), full()),
+            Arguments.of(of("Mon", "Tue"), complementOf("Mon", "Tue", "Sun"), complementOf("Sun")),
+            Arguments.of(of("Mon", "Tue"), full(), full()),
+
+            Arguments.of(complementOf("Mon"), complementOf("Mon"), complementOf("Mon")),
+            Arguments.of(complementOf("Mon"), complementOf("Sun"), full()),
+            Arguments.of(complementOf("Mon"), complementOf("Sun", "Mon"), complementOf("Mon")),
+            Arguments.of(complementOf("Mon"), full(), full()),
+
+            Arguments.of(complementOf("Mon", "Tue"), complementOf("Mon", "Tue"), complementOf("Mon", "Tue")),
+            Arguments.of(complementOf("Mon", "Tue"), complementOf("Sun", "Mon"), complementOf("Mon")),
+            Arguments.of(complementOf("Mon", "Tue"), complementOf("Sun", "Mon", "Tue"), complementOf("Mon", "Tue")),
+            Arguments.of(complementOf("Mon", "Tue"), full(), full()),
+
+            Arguments.of(full(), full(), full())
+        );
+    }
+
+    @ParameterizedTest
     @MethodSource("emptyIsAlwaysSameInstanceParameters")
     void testEmptyIsAlwaysSameInstance(final String message, final XSet<String> tested) {
         assertThat(message, tested, sameInstance(empty()));
@@ -315,7 +367,8 @@ class XSetTest {
             Arguments.of("complementOf[0].complement()", complementOf().complement()),
             Arguments.of("full.complement()", full().complement()),
 
-            Arguments.of("of.minus(complementOf)", of("Mon", "Tue").subtract(complementOf("Sun"))),
+            Arguments.of("empty.subtract(full)", empty().subtract(full())),
+            Arguments.of("of.subtract(complementOf)", of("Mon", "Tue").subtract(complementOf("Sun"))),
 
             Arguments.of("empty.intersect(of)", empty().intersect(of("Mon", "Tue"))),
             Arguments.of("of.intersect(empty)", of("Mon", "Tue").intersect(empty())),
@@ -337,9 +390,12 @@ class XSetTest {
             Arguments.of("of[0].complement()", of().complement()),
             Arguments.of("empty.complement()", empty().complement()),
 
-            Arguments.of("full.minus(empty)", full().subtract(empty())),
+            Arguments.of("full.subtract(empty)", full().subtract(empty())),
 
-            Arguments.of("full.intersect(full)", full().intersect(full()))
+            Arguments.of("full.intersect(full)", full().intersect(full())),
+
+            Arguments.of("of.union(complementOf)", of("Mon", "Tue").union(complementOf("Mon", "Tue"))),
+            Arguments.of("full.union(empty)", full().union(empty()))
         );
     }
 

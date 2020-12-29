@@ -277,6 +277,50 @@ public final class XSet<E> {
         return resultItems;
     }
 
+    /**
+     * Returns the union of this and the other extended sets.
+     *
+     * @param other the other extended set
+     * @return the union
+     */
+    public XSet<E> union(final XSet<E> other) {
+        Objects.requireNonNull(other, "other XSet must not be null");
+
+        if (this.items.isEmpty()) {
+            return this.complementary ? this : other;
+        }
+        else if (other.items.isEmpty()) {
+            return other.complementary ? other : this;
+        }
+        else {
+            final Set<E> resultItems = unionItems(other);
+            final boolean resultComplement = this.complementary || other.complementary;
+            return canonicalXSet(resultItems, resultComplement);
+        }
+    }
+
+    private Set<E> unionItems(final XSet<E> other) {
+        final Set<E> resultItems;
+
+        if (this.complementary) {
+            if (other.complementary) {
+                resultItems = intersect(this.items, other.items);
+            }
+            else {
+                resultItems = minus(this.items, other.items);
+            }
+        }
+        else if (other.complementary) {
+            resultItems = minus(other.items, this.items);
+        }
+        else {
+            resultItems = union(this.items, other.items);
+        }
+
+        return resultItems;
+    }
+
+
     private static <T> Set<T> intersect(final Set<T> set1, final Set<T> set2) {
         final Set<T> result = newHashSet(set1);
         result.retainAll(set2);

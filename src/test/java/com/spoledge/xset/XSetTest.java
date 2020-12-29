@@ -46,6 +46,18 @@ class XSetTest {
         assertProperties(message, tested, items, complementary);
     }
 
+    @ParameterizedTest
+    @MethodSource("createParameters")
+    void testComplement(final String message, final Collection<String> items, final boolean complementary) {
+        final XSet<String> original = complementary ? XSet.complementOf(items) : XSet.of(items);
+        final XSet<String> tested = original.complement();
+
+        assertAll(
+            () -> assertProperties(message, tested, items, !complementary),
+            () -> assertThat(message + " - complement of complement", tested.complement(), is(original))
+        );
+    }
+
     static Stream<Arguments> createParameters() {
         return Stream.of(
             Arguments.of("emptySet", Collections.emptySet(), false),
@@ -175,7 +187,9 @@ class XSetTest {
     static Stream<Arguments> emptyIsAlwaysSameInstanceParameters() {
         return Stream.of(
             Arguments.of("empty", empty()),
-            Arguments.of("of[0]", of())
+            Arguments.of("of[0]", of()),
+            Arguments.of("complementOf[0].complement()", complementOf().complement()),
+            Arguments.of("full.complement()", full().complement())
         );
     }
 
@@ -188,7 +202,9 @@ class XSetTest {
     static Stream<Arguments> fullIsAlwaysSameInstanceParameters() {
         return Stream.of(
             Arguments.of("full", full()),
-            Arguments.of("complementOf[0]", complementOf())
+            Arguments.of("complementOf[0]", complementOf()),
+            Arguments.of("of[0].complement()", of().complement()),
+            Arguments.of("empty.complement()", empty().complement())
         );
     }
 

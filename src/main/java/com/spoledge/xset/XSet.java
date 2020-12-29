@@ -206,6 +206,22 @@ public final class XSet<E> {
         return items.isEmpty();
     }
 
+    /**
+     * Returns the complement of this extended set.
+     * <p>
+     * This operation inverts the {@code complementary} flag.
+     *
+     * @return a complementary set to this one
+     */
+    public XSet<E> complement() {
+        if (items.isEmpty()) {
+            return complementary ? empty() : full();
+        }
+        else {
+            return new XSet<>(items, !complementary);
+        }
+    }
+
     private static <T> Set<T> singleton(final Collection<T> collection) {
         return Collections.singleton(collection.iterator().next());
     }

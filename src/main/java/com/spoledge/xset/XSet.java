@@ -206,12 +206,186 @@ public final class XSet<E> {
         return items.isEmpty();
     }
 
+    /**
+     * Returns the complement of this extended set.
+     * <p>
+     * This operation inverts the {@code complementary} flag.
+     *
+     * @return a complementary set to this one
+     */
+    public XSet<E> complement() {
+        if (items.isEmpty()) {
+            return complementary ? empty() : full();
+        }
+        else {
+            return new XSet<>(items, !complementary);
+        }
+    }
+
+    /**
+     * Returns the subtraction of the other set from this set.
+     *
+     * @param other the other extended set
+     * @return the subtraction
+     */
+    public XSet<E> subtract(final XSet<E> other) {
+        requireNonNull(other);
+
+        return intersect(other.complement());
+    }
+
+    /**
+     * Returns the intersection of this and the other extended sets.
+     *
+     * @param other the other extended set
+     * @return the intersection
+     */
+    public XSet<E> intersect(final XSet<E> other) {
+        requireNonNull(other);
+
+        if (this.items.isEmpty()) {
+            return this.complementary ? other : this;
+        }
+        else if (other.items.isEmpty()) {
+            return other.complementary ? this : other;
+        }
+        else {
+            final Set<E> resultItems = intersectItems(other);
+            final boolean resultComplementary = this.complementary && other.complementary;
+            return canonicalXSet(resultItems, resultComplementary);
+        }
+    }
+
+    private Set<E> intersectItems(final XSet<E> other) {
+        final Set<E> resultItems;
+
+        if (this.complementary) {
+            if (other.complementary) {
+                resultItems = union(this.items, other.items);
+            }
+            else {
+                resultItems = minus(other.items, this.items);
+            }
+        }
+        else if (other.complementary) {
+            resultItems = minus(this.items, other.items);
+        }
+        else {
+            resultItems = intersect(this.items, other.items);
+        }
+
+        return resultItems;
+    }
+
+    /**
+     * Returns the union of this and the other extended sets.
+     *
+     * @param other the other extended set
+     * @return the union
+     */
+    public XSet<E> union(final XSet<E> other) {
+        requireNonNull(other);
+
+        if (this.items.isEmpty()) {
+            return this.complementary ? this : other;
+        }
+        else if (other.items.isEmpty()) {
+            return other.complementary ? other : this;
+        }
+        else {
+            final Set<E> resultItems = unionItems(other);
+            final boolean resultComplement = this.complementary || other.complementary;
+            return canonicalXSet(resultItems, resultComplement);
+        }
+    }
+
+    private static <T> void requireNonNull(final XSet<T> other) {
+        Objects.requireNonNull(other, "other XSet must not be null");
+    }
+
+    private Set<E> unionItems(final XSet<E> other) {
+        final Set<E> resultItems;
+
+        if (this.complementary) {
+            if (other.complementary) {
+                resultItems = intersect(this.items, other.items);
+            }
+            else {
+                resultItems = minus(this.items, other.items);
+            }
+        }
+        else if (other.complementary) {
+            resultItems = minus(other.items, this.items);
+        }
+        else {
+            resultItems = union(this.items, other.items);
+        }
+
+        return resultItems;
+    }
+
+
+    private static <T> Set<T> intersect(final Set<T> set1, final Set<T> set2) {
+        final Set<T> result = newHashSet(set1);
+        result.retainAll(set2);
+        return result;
+    }
+
+    private static <T> Set<T> union(final Set<T> set1, final Set<T> set2) {
+        final Set<T> result = newHashSet(set1);
+        result.addAll(set2);
+        return result;
+    }
+
+    private static <T> Set<T> minus(final Set<T> set1, final Set<T> set2) {
+        final Set<T> result = newHashSet(set1);
+        result.removeAll(set2);
+        return result;
+    }
+
+    private static <T> XSet<T> canonicalXSet(final Set<T> items, final boolean complementary) {
+        if (items.isEmpty()) {
+            return complementary ? full() : empty();
+        }
+        else if (items.size() == 1) {
+            return new XSet<>(singleton(items), complementary);
+        }
+        else {
+            return new XSet<>(Collections.unmodifiableSet(items), complementary);
+        }
+    }
+
     private static <T> Set<T> singleton(final Collection<T> collection) {
         return Collections.singleton(collection.iterator().next());
     }
 
     private static <T> Set<T> newHashSet(final Collection<T> collection) {
         return new HashSet<>(collection);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(items, complementary);
+    }
+
+    @Override
+    public boolean equals(final Object other) {
+        if (this == other) {
+            return true;
+        }
+
+        if (other == null || getClass() != other.getClass()) {
+            return false;
+        }
+
+        final XSet that = (XSet) other;
+
+        return this.complementary == that.complementary && this.items.equals(that.items);
+    }
+
+    @Override
+    public String toString() {
+        return "XSet{" + (complementary ? "~" : "") + items + '}';
     }
 
 }

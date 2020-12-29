@@ -55,6 +55,7 @@
         <checkstyle-maven-plugin.version>3.1.1</checkstyle-maven-plugin.version>
         <checkstyle.config.location>code-style/checkstyle/checkstyle-config.xml</checkstyle.config.location>
         <checkstyle.header.file>code-style/checkstyle/checkstyle-header</checkstyle.header.file>
+        <checkstyle.suppressions.location>code-style/checkstyle/checkstyle-suppressions.xml</checkstyle.suppressions.location>
 
         <sonar.java.pmd.reportPaths>target/pmd.xml</sonar.java.pmd.reportPaths>
         <sonar.java.spotbugs.reportPaths>target/spotbugs.xml</sonar.java.spotbugs.reportPaths>
@@ -167,6 +168,9 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-checkstyle-plugin</artifactId>
                     <version>${checkstyle-maven-plugin.version}</version>
+                    <configuration>
+                        <includeTestSourceDirectory>true</includeTestSourceDirectory>
+                    </configuration>
                     <dependencies>
                         <dependency>
                             <groupId>com.puppycrawl.tools</groupId>

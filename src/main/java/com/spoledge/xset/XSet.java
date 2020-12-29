@@ -229,7 +229,7 @@ public final class XSet<E> {
      * @return the subtraction
      */
     public XSet<E> subtract(final XSet<E> other) {
-        Objects.requireNonNull(other, "other XSet must not be null");
+        requireNonNull(other);
 
         return intersect(other.complement());
     }
@@ -241,7 +241,7 @@ public final class XSet<E> {
      * @return the intersection
      */
     public XSet<E> intersect(final XSet<E> other) {
-        Objects.requireNonNull(other, "other XSet must not be null");
+        requireNonNull(other);
 
         if (this.items.isEmpty()) {
             return this.complementary ? other : this;
@@ -284,7 +284,7 @@ public final class XSet<E> {
      * @return the union
      */
     public XSet<E> union(final XSet<E> other) {
-        Objects.requireNonNull(other, "other XSet must not be null");
+        requireNonNull(other);
 
         if (this.items.isEmpty()) {
             return this.complementary ? this : other;
@@ -297,6 +297,10 @@ public final class XSet<E> {
             final boolean resultComplement = this.complementary || other.complementary;
             return canonicalXSet(resultItems, resultComplement);
         }
+    }
+
+    private static <T> void requireNonNull(final XSet<T> other) {
+        Objects.requireNonNull(other, "other XSet must not be null");
     }
 
     private Set<E> unionItems(final XSet<E> other) {

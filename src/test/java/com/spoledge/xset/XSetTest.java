@@ -179,6 +179,58 @@ class XSetTest {
     }
 
     @ParameterizedTest
+    @MethodSource("intersectParameters")
+    void testIntersect(final XSet<String> set1, final XSet<String> set2, final XSet<String> expected) {
+        assertAll("intersect " + set1 + " " + set2,
+            () -> assertThat(" -> ", set1.intersect(set2), is(expected)),
+            () -> assertThat(" <- ", set2.intersect(set1), is(expected))
+        );
+    }
+
+    static Stream<Arguments> intersectParameters() {
+        return Stream.of(
+            Arguments.of(empty(), empty(), empty()),
+            Arguments.of(empty(), of("Sun"), empty()),
+            Arguments.of(empty(), of("Sun", "Mon"), empty()),
+            Arguments.of(empty(), complementOf("Sun"), empty()),
+            Arguments.of(empty(), complementOf("Sun", "Mon"), empty()),
+            Arguments.of(empty(), full(), empty()),
+
+            Arguments.of(of("Mon"), of("Sun"), empty()),
+            Arguments.of(of("Mon"), of("Mon"), of("Mon")),
+            Arguments.of(of("Mon"), of("Sat", "Sun"), empty()),
+            Arguments.of(of("Mon"), of("Sun", "Mon"), of("Mon")),
+            Arguments.of(of("Mon"), complementOf("Sun"), of("Mon")),
+            Arguments.of(of("Mon"), complementOf("Mon"), empty()),
+            Arguments.of(of("Mon"), complementOf("Sat", "Sun"), of("Mon")),
+            Arguments.of(of("Mon"), complementOf("Sun", "Mon"), empty()),
+            Arguments.of(of("Mon"), full(), of("Mon")),
+
+            Arguments.of(of("Mon", "Tue"), of("Sat", "Sun"), empty()),
+            Arguments.of(of("Mon", "Tue"), of("Sun", "Mon"), of("Mon")),
+            Arguments.of(of("Mon", "Tue"), of("Mon", "Tue"), of("Mon", "Tue")),
+            Arguments.of(of("Mon", "Tue"), of("Mon", "Tue", "Sun"), of("Mon", "Tue")),
+            Arguments.of(of("Mon", "Tue"), complementOf("Sat", "Sun"), of("Mon", "Tue")),
+            Arguments.of(of("Mon", "Tue"), complementOf("Sun", "Mon"), of("Tue")),
+            Arguments.of(of("Mon", "Tue"), complementOf("Mon", "Tue"), empty()),
+            Arguments.of(of("Mon", "Tue"), complementOf("Mon", "Tue", "Sun"), empty()),
+            Arguments.of(of("Mon", "Tue"), full(), of("Mon", "Tue")),
+
+            Arguments.of(complementOf("Mon"), complementOf("Mon"), complementOf("Mon")),
+            Arguments.of(complementOf("Mon"), complementOf("Sun"), complementOf("Sun", "Mon")),
+            Arguments.of(complementOf("Mon"), complementOf("Sun", "Mon"), complementOf("Sun", "Mon")),
+            Arguments.of(complementOf("Mon"), full(), complementOf("Mon")),
+
+            Arguments.of(complementOf("Mon", "Tue"), complementOf("Mon", "Tue"), complementOf("Mon", "Tue")),
+            Arguments.of(complementOf("Mon", "Tue"), complementOf("Sun", "Mon"), complementOf("Sun", "Mon", "Tue")),
+            Arguments.of(complementOf("Mon", "Tue"), complementOf("Sun", "Mon", "Tue"), complementOf("Sun", "Mon", "Tue")),
+            Arguments.of(complementOf("Mon", "Tue"), full(), complementOf("Mon", "Tue")),
+
+            Arguments.of(full(), full(), full())
+        );
+    }
+
+    @ParameterizedTest
     @MethodSource("emptyIsAlwaysSameInstanceParameters")
     void testEmptyIsAlwaysSameInstance(final String message, final XSet<String> tested) {
         assertThat(message, tested, sameInstance(empty()));
@@ -188,8 +240,13 @@ class XSetTest {
         return Stream.of(
             Arguments.of("empty", empty()),
             Arguments.of("of[0]", of()),
+
             Arguments.of("complementOf[0].complement()", complementOf().complement()),
-            Arguments.of("full.complement()", full().complement())
+            Arguments.of("full.complement()", full().complement()),
+
+            Arguments.of("empty.intersect(of)", empty().intersect(of("Mon", "Tue"))),
+            Arguments.of("of.intersect(empty)", of("Mon", "Tue").intersect(empty())),
+            Arguments.of("of.intersect(of)", of("Mon", "Tue").intersect(of("Sat", "Sun")))
         );
     }
 

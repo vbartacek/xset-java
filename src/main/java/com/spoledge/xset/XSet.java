@@ -19,7 +19,10 @@ import java.util.Set;
  * This class is an extension of a finite set.
  * It can hold both finite sets and those inifite ones that can be represented as a complement of finite sets.
  * <p>
- * The implementation maintains a finite {@link Set} of {@code items} and a {@code boolean} {@code complementary} flag.
+ * The standard set operations are supported: contains, containsAll, containsAny, complement, subtraction, instersection and union.
+ * {@code XSet} is a generic type.
+ * <p>
+ * The implementation maintains a finite {@link Set} of {@code items} and a {@code boolean} flag {@code complementary}.
  * The {@code items} should hold only a given type of elements.
  * The {@code items} cannot hold {@code null} elements.
  * <p>

@@ -199,7 +199,8 @@ class XSetTest {
 
     @Test
     void testContainsNull() {
-        assertThrows(NullPointerException.class, () -> of("Mon").contains(null));
+        final XSet<String> tested = of("Mon");
+        assertThrows(NullPointerException.class, () -> tested.contains(null));
     }
 
     @ParameterizedTest
@@ -232,12 +233,13 @@ class XSetTest {
 
     @Test
     void testContainsAllNull() {
+        final XSet<String> tested = of("Mon");
         final Collection<String> nullCollection = null;
         final Collection<String> nullItemCollection = Collections.singleton((String) null);
 
         assertAll(
-            () -> assertThrows(NullPointerException.class, () -> of("Mon").containsAll(nullCollection), "null collection"),
-            () -> assertThrows(NullPointerException.class, () -> of("Mon").containsAll(nullItemCollection), "null item  collection")
+            () -> assertThrows(NullPointerException.class, () -> tested.containsAll(nullCollection), "null collection"),
+            () -> assertThrows(NullPointerException.class, () -> tested.containsAll(nullItemCollection), "null item  collection")
         );
     }
 
@@ -286,12 +288,13 @@ class XSetTest {
 
     @Test
     void testContainsAnyNull() {
+        final XSet<String> tested = of("Mon");
         final Collection<String> nullCollection = null;
         final Collection<String> nullItemCollection = Collections.singleton((String) null);
 
         assertAll(
-            () -> assertThrows(NullPointerException.class, () -> of("Mon").containsAny(nullCollection), "null collection"),
-            () -> assertThrows(NullPointerException.class, () -> of("Mon").containsAny(nullItemCollection), "null item  collection")
+            () -> assertThrows(NullPointerException.class, () -> tested.containsAny(nullCollection), "null collection"),
+            () -> assertThrows(NullPointerException.class, () -> tested.containsAny(nullItemCollection), "null item  collection")
         );
     }
 

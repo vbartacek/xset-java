@@ -161,7 +161,7 @@ public final class XSet<E> {
     private static <T> void requireNonNullItems(final Collection<T> collection) {
         // we cannot call contains(null) because the underlying collection might not support nulls
         final boolean containsNullItem = collection.stream()
-            .anyMatch(it -> it == null);
+            .anyMatch(Objects::isNull);
 
         if (containsNullItem) {
             throw new NullPointerException("items must not be null");
@@ -273,8 +273,8 @@ public final class XSet<E> {
             return true;
         }
         else if (complementary) {
-            return !otherItems.stream()
-                .anyMatch(items::contains);
+            return otherItems.stream()
+                .noneMatch(items::contains);
         }
         else {
             return items.containsAll(otherItems);

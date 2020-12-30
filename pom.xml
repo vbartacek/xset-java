@@ -7,7 +7,7 @@
 
     <groupId>com.github.vbartacek</groupId>
     <artifactId>xset</artifactId>
-    <version>0.1.0-SNAPSHOT</version>
+    <version>0.1.0</version>
 
     <name>XSet - Complementary Sets</name>
     <description>A library that allows working with sets and complementary sets.</description>

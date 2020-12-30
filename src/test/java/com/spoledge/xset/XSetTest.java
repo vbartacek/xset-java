@@ -284,6 +284,60 @@ class XSetTest {
         );
     }
 
+    @Test
+    void testContainsAnyNull() {
+        final Collection<String> nullCollection = null;
+        final Collection<String> nullItemCollection = Collections.singleton((String) null);
+
+        assertAll(
+            () -> assertThrows(NullPointerException.class, () -> of("Mon").containsAny(nullCollection), "null collection"),
+            () -> assertThrows(NullPointerException.class, () -> of("Mon").containsAny(nullItemCollection), "null item  collection")
+        );
+    }
+
+    @ParameterizedTest
+    @MethodSource("containsAnyParameters")
+    void testContainsAny(final XSet<String> set, final Collection<String> items, final boolean expected) {
+        assertThat("containsAny " + set + " :: " + items, set.containsAny(items), is(expected));
+    }
+
+    static Stream<Arguments> containsAnyParameters() {
+        return Stream.of(
+            Arguments.of(empty(), Collections.emptySet(), true),
+            Arguments.of(empty(), Collections.singleton("Mon"), false),
+            Arguments.of(empty(), Arrays.asList("Mon", "Tue"), false),
+
+            Arguments.of(of("Mon"), Collections.emptySet(), true),
+            Arguments.of(of("Mon"), Collections.singleton("Mon"), true),
+            Arguments.of(of("Mon"), Collections.singleton("Tue"), false),
+            Arguments.of(of("Mon"), Arrays.asList("Mon", "Tue"), true),
+            Arguments.of(of("Mon"), Arrays.asList("Sun", "Sat"), false),
+
+            Arguments.of(of("Mon", "Tue"), Collections.singleton("Mon"), true),
+            Arguments.of(of("Mon", "Tue"), Collections.singleton("Tue"), true),
+            Arguments.of(of("Mon", "Tue"), Collections.singleton("Sun"), false),
+            Arguments.of(of("Mon", "Tue"), Arrays.asList("Mon", "Tue"), true),
+            Arguments.of(of("Mon", "Tue"), Arrays.asList("Mon", "Sun"), true),
+            Arguments.of(of("Mon", "Tue"), Arrays.asList("Sat", "Sun"), false),
+
+            Arguments.of(complementOf("Mon", "Tue"), Collections.singleton("Mon"), false),
+            Arguments.of(complementOf("Mon", "Tue"), Collections.singleton("Tue"), false),
+            Arguments.of(complementOf("Mon", "Tue"), Collections.singleton("Sun"), true),
+            Arguments.of(complementOf("Mon", "Tue"), Arrays.asList("Mon", "Tue"), false),
+            Arguments.of(complementOf("Mon", "Tue"), Arrays.asList("Mon", "Sun"), true),
+            Arguments.of(complementOf("Mon", "Tue"), Arrays.asList("Sat", "Sun"), true),
+
+            Arguments.of(complementOf("Mon"), Collections.singleton("Mon"), false),
+            Arguments.of(complementOf("Mon"), Collections.singleton("Tue"), true),
+            Arguments.of(complementOf("Mon"), Arrays.asList("Mon", "Tue"), true),
+            Arguments.of(complementOf("Mon"), Arrays.asList("Sat", "Sun"), true),
+
+            Arguments.of(full(), Collections.emptySet(), true),
+            Arguments.of(full(), Collections.singleton("Mon"), true),
+            Arguments.of(full(), Arrays.asList("Mon", "Tue"), true)
+        );
+    }
+
     @ParameterizedTest
     @MethodSource("subtractParameters")
     void testSubtract(final XSet<String> set1, final XSet<String> set2, final XSet<String> expected) {

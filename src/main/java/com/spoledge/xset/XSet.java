@@ -260,6 +260,7 @@ public final class XSet<E> {
      * @return true if this extended set contains all the elements
      * @throws NullPointerException if the specified collection or any element of the collection is {@code null}
      * @see #contains(Object)
+     * @see #containsAny(Collection)
      */
     public boolean containsAll(final Collection<E> otherItems) {
         requireNonNull(otherItems);
@@ -274,6 +275,36 @@ public final class XSet<E> {
         }
         else {
             return items.containsAll(otherItems);
+        }
+    }
+
+    /**
+     * Returns {@code true} if this extended set contains at least one element of the specified collection or the collection is empty.
+     * <p>
+     * More formally, returns {@code false} if and only if: for each element {@code e} of the {@code otherItems}
+     * the expression {@code this.contains(e)} returns {@code false}.
+     * <p>
+     * That also means that this method returns {@code true} for empty {@code otherItems} collections.
+     *
+     * @param otherItems collection of elements whose presence in this collection is to be tested
+     * @return true if this extended set contains all the elements or the specified collection is empty
+     * @throws NullPointerException if the specified collection or any element of the collection is {@code null}
+     * @see #contains(Object)
+     * @see #containsAll(Collection)
+     */
+    public boolean containsAny(final Collection<E> otherItems) {
+        requireNonNull(otherItems);
+        requireNonNullItems(otherItems);
+
+        if (otherItems.isEmpty()) {
+            return true;
+        }
+        else if (complementary) {
+            return !items.containsAll(otherItems);
+        }
+        else {
+            return otherItems.stream()
+                .anyMatch(items::contains);
         }
     }
 

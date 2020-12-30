@@ -231,7 +231,7 @@ public final class XSet<E> {
     /**
      * Returns {@code true} if this extended set contains the specified element.
      * <p>
-     * More formally, returns true if and only if this set:
+     * More formally, returns {@code true} if and only if this set:
      * <ul>
      * <li>is a finite set and it contains at least one element {@code e} such that {@code Objects.equals(item, e)}</li>
      * <li>is a complementary set to a finite set {@code F} and {@code !F.contains(item)}</li>
@@ -246,6 +246,35 @@ public final class XSet<E> {
 
         final boolean containsItem = items.contains(item);
         return complementary ? !containsItem : containsItem;
+    }
+
+    /**
+     * Returns {@code true} if this extended set contains all elements of the specified collection.
+     * <p>
+     * More formally, returns {@code true} if and only if: for each element {@code e} of the {@code otherItems}
+     * the expression {@code this.contains(e)} returns {@code true}.
+     * <p>
+     * That also means that this method returns {@code true} for empty {@code otherItems} collections.
+     *
+     * @param otherItems collection of elements whose presence in this collection is to be tested
+     * @return true if this extended set contains all the elements
+     * @throws NullPointerException if the specified collection or any element of the collection is {@code null}
+     * @see #contains(Object)
+     */
+    public boolean containsAll(final Collection<E> otherItems) {
+        requireNonNull(otherItems);
+        requireNonNullItems(otherItems);
+
+        if (otherItems.isEmpty()) {
+            return true;
+        }
+        else if (complementary) {
+            return !otherItems.stream()
+                .anyMatch(items::contains);
+        }
+        else {
+            return items.containsAll(otherItems);
+        }
     }
 
     /**

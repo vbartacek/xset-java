@@ -6,4 +6,4 @@
 /**
  * Extended sets utility package.
  */
-package com.spoledge.xset;
+package com.github.vbartacek.xset;

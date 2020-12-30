@@ -3,7 +3,7 @@
  * MIT License
  */
 
-package com.spoledge.xset;
+package com.github.vbartacek.xset;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;

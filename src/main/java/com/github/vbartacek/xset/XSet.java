@@ -3,7 +3,7 @@
  * MIT License
  */
 
-package com.spoledge.xset;
+package com.github.vbartacek.xset;
 
 import java.util.Arrays;
 import java.util.Collection;

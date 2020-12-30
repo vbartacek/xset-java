@@ -20,6 +20,12 @@ import java.util.Set;
  * It can hold both finite sets and those inifite ones that can be represented as a complement of finite sets.
  * <p>
  * The implementation maintains a finite {@link Set} of {@code items} and a {@code boolean} {@code complementary} flag.
+ * The {@code items} should hold only a given type of elements.
+ * The {@code items} cannot hold {@code null} elements.
+ * <p>
+ * The {@code XSet} cannot directly implement {@link java.util.Collection}, because the method {@link java.util.Collection#contains(Object}}
+ * is not type-safe and we cannot implement such method here.
+ * Instead of that we implement method with the same name, but taking as the parameter only objects of the given type.
  * <p>
  * This class is immutable - once created its content cannot be changed.
  * It also means that this class is thread-safe.
@@ -72,10 +78,11 @@ public final class XSet<E> {
      * @param items the items of the finite set
      * @param <T> the element type
      * @return the finite extended set
+     * @throws NullPointerException if any of the specified items is {@code null}
      */
     @SafeVarargs
     public static <T> XSet<T> of(final T... items) {
-        Objects.requireNonNull(items, "items must not be null");
+        requireNonNull(items);
 
         return of(Arrays.asList(items));
     }
@@ -88,9 +95,10 @@ public final class XSet<E> {
      * @param collection the collection of items of the finite set
      * @param <T> the element type
      * @return the finite extended set
+     * @throws NullPointerException if the collection or any of the specified items is {@code null}
      */
     public static <T> XSet<T> of(final Collection<T> collection) {
-        Objects.requireNonNull(collection, "collection must not be null");
+        requireNonNull(collection);
 
         return toXSet(collection, false);
     }
@@ -101,10 +109,11 @@ public final class XSet<E> {
      * @param items the complementary items of the result set
      * @param <T> the element type
      * @return the complement of the finite extended set
+     * @throws NullPointerException if any of the specified items is {@code null}
      */
     @SafeVarargs
     public static <T> XSet<T> complementOf(final T... items) {
-        Objects.requireNonNull(items, "items must not be null");
+        requireNonNull(items);
 
         return complementOf(Arrays.asList(items));
     }
@@ -115,9 +124,10 @@ public final class XSet<E> {
      * @param collection the collection of complementary items of the result set
      * @param <T> the element type
      * @return the complement of the finite extended set
+     * @throws NullPointerException if the collection or any of the specified items is {@code null}
      */
     public static <T> XSet<T> complementOf(final Collection<T> collection) {
-        Objects.requireNonNull(collection, "collection must not be null");
+        requireNonNull(collection);
 
         return toXSet(collection, true);
     }
@@ -133,6 +143,8 @@ public final class XSet<E> {
     }
 
     private static <T> Set<T> nonEmptyCollectionToSet(final Collection<T> collection) {
+        requireNonNullItems(collection);
+
         if (collection.size() == 1) {
             return singleton(collection);
         }
@@ -140,6 +152,16 @@ public final class XSet<E> {
             final Set<T> result = newHashSet(collection);
             // be aware of potential duplicity items that are being collapsed to singleton:
             return result.size() == 1 ? singleton(collection) : Collections.unmodifiableSet(result);
+        }
+    }
+
+    private static <T> void requireNonNullItems(final Collection<T> collection) {
+        // we cannot call contains(null) because the underlying collection might not support nulls
+        final boolean containsNullItem = collection.stream()
+            .anyMatch(it -> it == null);
+
+        if (containsNullItem) {
+            throw new NullPointerException("items must not be null");
         }
     }
 
@@ -207,6 +229,26 @@ public final class XSet<E> {
     }
 
     /**
+     * Returns {@code true} if this extended set contains the specified element.
+     * <p>
+     * More formally, returns true if and only if this set:
+     * <ul>
+     * <li>is a finite set and it contains at least one element {@code e} such that {@code Objects.equals(item, e)}</li>
+     * <li>is a complementary set to a finite set {@code F} and {@code !F.contains(item)}</li>
+     * </ul>
+     *
+     * @param item element whose presence in this collection is to be tested
+     * @return true if this extended set contains the element
+     * @throws NullPointerException if the specified element is {@code null}
+     */
+    public boolean contains(final E item) {
+        requireNonNull(item);
+
+        final boolean containsItem = items.contains(item);
+        return complementary ? !containsItem : containsItem;
+    }
+
+    /**
      * Returns the complement of this extended set.
      * <p>
      * This operation inverts the {@code complementary} flag.
@@ -227,6 +269,7 @@ public final class XSet<E> {
      *
      * @param other the other extended set
      * @return the subtraction
+     * @throws NullPointerException if the other set is {@code null}
      */
     public XSet<E> subtract(final XSet<E> other) {
         requireNonNull(other);
@@ -239,6 +282,7 @@ public final class XSet<E> {
      *
      * @param other the other extended set
      * @return the intersection
+     * @throws NullPointerException if the other set is {@code null}
      */
     public XSet<E> intersect(final XSet<E> other) {
         requireNonNull(other);
@@ -282,6 +326,7 @@ public final class XSet<E> {
      *
      * @param other the other extended set
      * @return the union
+     * @throws NullPointerException if the other set is {@code null}
      */
     public XSet<E> union(final XSet<E> other) {
         requireNonNull(other);
@@ -297,10 +342,6 @@ public final class XSet<E> {
             final boolean resultComplement = this.complementary || other.complementary;
             return canonicalXSet(resultItems, resultComplement);
         }
-    }
-
-    private static <T> void requireNonNull(final XSet<T> other) {
-        Objects.requireNonNull(other, "other XSet must not be null");
     }
 
     private Set<E> unionItems(final XSet<E> other) {
@@ -323,7 +364,6 @@ public final class XSet<E> {
 
         return resultItems;
     }
-
 
     private static <T> Set<T> intersect(final Set<T> set1, final Set<T> set2) {
         final Set<T> result = newHashSet(set1);
@@ -361,6 +401,14 @@ public final class XSet<E> {
 
     private static <T> Set<T> newHashSet(final Collection<T> collection) {
         return new HashSet<>(collection);
+    }
+
+    private static <T> void requireNonNull(final XSet<T> other) {
+        Objects.requireNonNull(other, "other XSet must not be null");
+    }
+
+    private static void requireNonNull(final Object input) {
+        Objects.requireNonNull(input, "input must not be null");
     }
 
     @Override

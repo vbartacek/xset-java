@@ -26,7 +26,7 @@ import java.util.Set;
  * The {@code items} should hold only a given type of elements.
  * The {@code items} cannot hold {@code null} elements.
  * <p>
- * The {@code XSet} cannot directly implement {@link java.util.Collection}, because the method {@link java.util.Collection#contains(Object}}
+ * The {@code XSet} cannot directly implement {@link java.util.Collection}, because the method {@link java.util.Collection#contains(Object)}
  * is not type-safe and we cannot implement such method here.
  * Instead of that we implement method with the same name, but taking as the parameter only objects of the given type.
  * <p>

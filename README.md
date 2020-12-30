@@ -26,7 +26,7 @@ The implementation maintains a finite `Set` of `items` and a `boolean` flag `com
 The `items` should hold only a given type of elements - according to the generic type (e.g. "String" or "Long").
 The `items` cannot hold `null` elements.
 
-The `XSet` cannot directly implement `java.util.Collection`, because the method `java.util.Collection#contains(Object}`
+The `XSet` cannot directly implement `java.util.Collection`, because the method `java.util.Collection#contains(Object)`
 is not type-safe and we cannot implement such method here.
 Instead of that we implement method with the same name, but taking as the parameter only objects of the given type.
 

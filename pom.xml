@@ -8,7 +8,10 @@
     <groupId>com.spoledge.xset</groupId>
     <artifactId>xset</artifactId>
     <version>0.1.0-SNAPSHOT</version>
+
     <name>XSet - Complementary Sets</name>
+    <description>A library that allows working with sets and complementary sets.</description>
+    <url>https://github.com/vbartacek/xset-java</url>
 
     <inceptionYear>2020</inceptionYear>
 
@@ -16,6 +19,22 @@
         <name>Spolecne s.r.o.</name>
         <url>https://www.spoledge.com</url>
     </organization>
+
+    <licenses>
+        <license>
+            <name>MIT License</name>
+            <url>https://opensource.org/licenses/MIT</url>
+        </license>
+    </licenses>
+
+    <developers>
+        <developer>
+            <name>Vaclav Bartacek</name>
+            <email>vaclav.bartacel@spoledge.com</email>
+            <organization>Spolecne s.r.o.</organization>
+            <organizationUrl>https://www.spoledge.com</organizationUrl>
+        </developer>
+    </developers>
 
     <scm>
         <developerConnection>scm:git:https://github.com/vbartacek/xset-java.git</developerConnection>
@@ -196,6 +215,12 @@
 
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-source-plugin</artifactId>
+                    <version>3.2.1</version>
+                </plugin>
+
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
                     <version>3.2.0</version>
                 </plugin>
@@ -244,6 +269,41 @@
                                 <phase>package</phase>
                                 <goals>
                                     <goal>javadoc</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>attach-sources</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>jar-no-fork</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>jar</goal>
                                 </goals>
                             </execution>
                         </executions>

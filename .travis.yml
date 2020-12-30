@@ -20,4 +20,4 @@ branches:
     - /^release\/.*$/
 
 install: true
-script: mvn clean verify pmd:pmd spotbugs:spotbugs checkstyle:checkstyle sonar:sonar -Pcoverage
+script: mvn clean verify pmd:pmd spotbugs:spotbugs checkstyle:checkstyle sonar:sonar -Pcoverage,javadoc

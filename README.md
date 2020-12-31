@@ -3,16 +3,24 @@
 [![Build Status](https://travis-ci.com/vbartacek/xset-java.svg?branch=develop)](https://travis-ci.com/vbartacek/xset-java)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=com.github.vbartacek%3Axset&metric=alert_status)](https://sonarcloud.io/dashboard?id=com.github.vbartacek%3Axset)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=com.github.vbartacek%3Axset&metric=coverage)](https://sonarcloud.io/dashboard?id=com.github.vbartacek%3Axset)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.vbartacek/xset/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.vbartacek/xset)
+
+## Contents
+
+* [Overview](#overview)
+* [Usage](#usage)
+    * [XSet](#xset)
+* [Build](#build)
+* [Release](#release)
+* [License](#license)
 
 
 ## Overview
 
-This is a Java library that allows working with sets and complementary sets.
-
-TODO - WORK IN PROGRESS
+This is a Java library for sets and complementary sets.
 
 
-## Core Classes
+## Usage
 
 ### XSet
 
@@ -57,4 +65,52 @@ assert weekdays.intersect(weekend).equals(XSet.empty());
 
 assert weekend.subtract(XSet.of("Sat", "Mon")).equals(XSet.of("Sun"));
 ```
+
+
+## Build
+
+Maven is used for building this project:
+
+```bash
+mvn clean verify
+```
+
+To generate the code coverage report in HTML format, then do the following:
+
+```bash
+mvn clean verify jacoco:report -Pcoverage
+```
+
+To execute static analysis - PMD, Spotbugs and Checkstyle, then do the following:
+
+```bash
+mvn pmd:check spotbugs:check checkstyle:check
+```
+
+
+## Release
+
+Release prerequisities:
+
+* install `gpg`
+* ensure you have created and published your GPG key
+* ensure you have configured your access for `ossrh` server in maven `settings.xml`
+* you have committed non-snapshot version to be released
+
+Then build and upload artifacts to staging repository:
+
+```bash
+mvn clean deploy -Prelease
+```
+
+Verify the staging repository and make the release:
+
+```bash
+mvn nexus-staging:release -Prelease
+```
+
+
+## License
+
+This project is licensed under [MIT License](http://opensource.org/licenses/MIT).
 

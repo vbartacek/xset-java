@@ -92,6 +92,8 @@
         <checkstyle.header.file>code-style/checkstyle/checkstyle-header</checkstyle.header.file>
         <checkstyle.suppressions.location>code-style/checkstyle/checkstyle-suppressions.xml</checkstyle.suppressions.location>
 
+        <sonar.organization>spoledge</sonar.organization>
+        <sonar.host.url>https://sonarcloud.io</sonar.host.url>
         <sonar.java.pmd.reportPaths>target/pmd.xml</sonar.java.pmd.reportPaths>
         <sonar.java.spotbugs.reportPaths>target/spotbugs.xml</sonar.java.spotbugs.reportPaths>
         <sonar.java.checkstyle.reportPaths>target/checkstyle-result.xml</sonar.java.checkstyle.reportPaths>

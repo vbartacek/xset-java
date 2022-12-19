@@ -1,9 +1,10 @@
 # XSet - Extended Sets for Java
 
-[![Build Status](https://travis-ci.com/vbartacek/xset-java.svg?branch=develop)](https://travis-ci.com/vbartacek/xset-java)
+[![Build Status](https://github.com/vbartacek/xset-java/actions/workflows/build.yml/badge.svg?event=push)](https://github.com/vbartacek/xset-java/actions/workflows/build.yml)
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=com.github.vbartacek%3Axset&metric=alert_status)](https://sonarcloud.io/dashboard?id=com.github.vbartacek%3Axset)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=com.github.vbartacek%3Axset&metric=coverage)](https://sonarcloud.io/dashboard?id=com.github.vbartacek%3Axset)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/com.github.vbartacek/xset/badge.svg)](https://maven-badges.herokuapp.com/maven-central/com.github.vbartacek/xset)
+
 
 ## Contents
 
